@@ -1,5 +1,5 @@
 from models.Todo import Todo
-from db.connection import get_connection
+from utils.db.connection import get_connection
 from utils.formatter import log, print_result_set
 
 
