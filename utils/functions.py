@@ -1,5 +1,6 @@
 from models.Todo import Todo
-from utils.db.connection import get_connection
+from db.connection import get_connection
+from utils.formatter import log, print_result_set
 
 
 def print_help():
@@ -27,25 +28,49 @@ def all_todos():
     cursor.execute("SELECT * FROM todos")
 
     result = cursor.fetchall()
-    print_line()
-    print_formatted('id', 'title', 'created at', 'status')
-    print_line()
-    for todo in result:
-        print_formatted(todo[0], todo[1], str(todo[2]), todo[3])
-
-    print_line()
+    print_result_set(result)
 
 
-def log(message, success=True):
-    if success:
-        print("[SUCCESS]:", message)
-    else:
-        print("[FAILURE]:", message)
+def active_todos():
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM todos WHERE status = 'ACTIVE'")
+
+    result = cursor.fetchall()
+    print_result_set(result)
 
 
-def print_line():
-    print("+------+--------------------------------+----------------------+------------+")
+def completed_todos():
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM todos WHERE status = 'COMPLETED'")
+
+    result = cursor.fetchall()
+    print_result_set(result)
 
 
-def print_formatted(_id, name, created_at, status):
-    print("| {:<4} | {:<30} | {:<20} | {:<10} |".format(_id, name, str(created_at), status))
+def today_s_todos():
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM todos WHERE DATE(created_at) = DATE (NOW())")
+
+    result = cursor.fetchall()
+    print_result_set(result)
+
+
+def yesterday_s_todos():
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM todos WHERE DATE(created_at) = DATE (NOW())")
+
+    result = cursor.fetchall()
+    print_result_set(result)
+
+
+def yesterday_but_one_s_todos():
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM todos WHERE DATE(created_at) - DATE (NOW()) = 1")
+
+    result = cursor.fetchall()
+    print_result_set(result)
